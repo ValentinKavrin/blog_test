@@ -1,0 +1,211 @@
+openapi: 3.0.1
+info:
+  description: Документация для тестового задания
+  version: 3.0.0
+  title: Swagger DB
+  contact:
+    email: kavrin00@mail.ru
+
+tags:
+- name: auth
+- name: post
+schemes:
+- https
+- http
+paths:
+  /auth/registration:
+    post:
+      tags:
+      - auth
+      summary: register user
+      description: registration a new user
+      parameters:
+      - in: body
+        name: body
+        schema:
+          $ref: '#/components/registration'            
+      responses:
+        '201': 
+          description: user register successfully
+        '400': 
+          description: Registration error
+  /auth/login:
+    post:
+      tags:
+      - auth
+      summary: login user
+      parameters:
+      - in: body
+        name: body
+        schema:
+          $ref: '#/components/login'              
+      responses:
+        '200': 
+          description: user login successfully
+        '400': 
+          description: login error
+  /api/post:
+    post:
+      tags:
+      - post
+      summary: Create post
+      consumes:
+         - multipart/form-data
+      description: Create a new post
+      parameters:
+      - in: header
+        name: authorization
+        required: true
+      - in: formdata
+        name: upfile
+        type: file
+        description: The file to upload.
+      - in: formData
+        name: title
+        type: string
+        required: false
+      - in: formData
+        name: text
+        type: string
+        required: false
+      responses:
+        '201':
+          description: Post created successfully
+        '400': 
+          description: Create new post error
+        '401':
+          description: You need to log in
+  /api/post/user:
+    get:
+      tags:
+      - post
+      summary: Get your post
+      description: The user gets all post and can edit it
+      parameters:
+      - in: header
+        name: authorization
+        required: true          
+      responses:
+        '400': 
+          description: Пост не найден, возможно был удален
+        '401':
+          description: You need to log in
+  /api/posts/:
+    get:
+      tags:
+      - post
+      summary: Get all post 
+      description: The user gets all post
+      parameters:
+      - in: header
+        name: authorization
+        required: true      
+      responses:
+        '401':
+          description: You need to log in
+  /api/post/:
+    put:
+      tags:
+      - post
+      summary: Update post
+      description: The user can edit post
+      consumes:
+         - multipart/form-data
+      parameters:
+      - in: header
+        name: authorization
+        required: true
+      - in: formdata
+        name: upfile
+        type: file
+        description: The file to upload.
+      - in: formData
+        name: title
+        type: string
+        required: false
+      - in: formData
+        name: text
+        type: string
+        required: false   
+      responses:
+        '200':
+          description: Update post - successfully
+        '401':
+          description: You need to log in
+  /api/post/:
+    delete:
+      tags:
+      - post
+      summary: Get all post 
+      description: The user gets all post
+      parameters:
+      - in: header
+        name: authorization
+        required: true 
+      - in: body
+        name: body  
+        schema:
+          $ref: '#/post/deletePost'     
+      responses:
+        '401':
+          description: You need to log in
+  /api/image/{imageName}:
+    get:
+      tags:
+      - image
+      summary: Get image 
+      parameters:
+      - in: header
+        name: authorization
+        required: true    
+      - in: body
+        name: imageName 
+      responses:
+        '401':
+          description: You need to log in
+
+components:
+  registration:
+    type: object
+    properties:
+      login:
+        type: string
+      firstName:
+        type: string
+      secondName:
+        type: string
+      password:
+        type: string
+  login:
+    type: object
+    properties:
+      login:
+        type: string
+      password:
+        type: string
+
+post:
+  updatePost:
+    type: object
+    properties:
+      title:
+        type: string
+      text:
+        type: string
+      file:
+        type: file
+  deletePost:
+    type: object
+    properties:
+      id:
+        type: string
+  
+user:
+  updateUser:
+    type: object
+    properties:
+      name:
+        type: string
+      surname:
+        type: string
+  
